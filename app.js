@@ -1,48 +1,79 @@
-let titulo = document.querySelector('h1');//h1 se utiliza para modificar el titulo en h1en el html
-titulo.innerHTML = 'Hora del Desafío';
+let numeroSecreto = 0;
+let intentos = 0;
+let listaNumerosSorteados = [];
+let numeroMaximo = 10;
 
-/*3.Crea una función que muestre en la consola el mensaje El botón fue clicado siempre que se presione el botón Console.
-
-En el index.html , agregamos en el onclick el siguiente código:
-<button onclick="mostarMensajeEnLaConsola()" class="button">Console</button>
-*/
-
-function mostarMensajeEnLaConsola() {
-    console.log('El botón fue clicado!')
-
-}
-/*4.Crea una función que se ejecute cuando se haga clic en el botón "prompt", preguntando el nombre de una ciudad de Brasil. Luego, muestra una alerta con el mensaje concatenando la respuesta con el texto: "Estuve en {ciudad} y me acordé de ti".
-
-En el index.html , agregamos en el onclick el siguiente código:
-
-<button onclick="mostrarAlerta()" class="button">Alert</button>
-*/
-function mostrarAlerta(){
-    let ciudad = prompt('Dame el nombre de alguna ciudad de México:');
-    alert('Estuve en ' + ciudad +' y me acorde de ti.');
+function asignarTextoElemento(elemento, texto) {
+    let elementoHTML = document.querySelector(elemento);
+    elementoHTML.innerHTML = texto;
+    return;
 }
 
-/*5.Crea una función que muestre una alerta con el mensaje: "Amo JS" siempre que se presione el botón "Alerta".
-
-En el index.html , agregamos en el onclick el siguiente código:
-
-<button onclick="mostarAlerta()" class="button">Alert</button>*/
-
-function mostrarAlert(){
-    alert('AMO JS');
-}
-
-/*
-6.Al hacer clic en el botón "suma", pide 2 números y muestra el resultado de la suma en una alerta.
-
-En el index.html , agregamos en el onclick el siguiente código:
-
- <button onclick="sumaDosNumeros()" class="button">Suma</button>*/
-
- function sumaDeDosNumeros(){
-    let primerNumero =parseInt( prompt ('Dame el primer número para la suma'));
-    let segundoNumero=  parseInt(prompt ('Dame el segundo número para la suma'));
-    let resultado = primerNumero + segundoNumero;
-    alert(`La suma de los números es: ${resultado}`);
+function verificarIntento() {
+    let numeroDeUsuario = parseInt(document.getElementById('valorUsuario').value);
     
- }
+    if (numeroDeUsuario === numeroSecreto) {
+        asignarTextoElemento('p',`Acertaste el número en ${intentos} ${(intentos === 1) ? 'vez' : 'veces'}`);
+        document.getElementById('reiniciar').removeAttribute('disabled');
+    } else {
+        //El usuario no acertó.
+        if (numeroDeUsuario > numeroSecreto) {
+            asignarTextoElemento('p','El número secreto es menor');
+        } else {
+            asignarTextoElemento('p','El número secreto es mayor');
+        }
+        intentos++;
+        limpiarCaja();
+    }
+    return;
+}
+
+function limpiarCaja() {
+    document.querySelector('#valorUsuario').value = '';
+}
+
+function generarNumeroSecreto() {
+    let numeroGenerado =  Math.floor(Math.random()*numeroMaximo)+1;
+
+    console.log(numeroGenerado);
+    console.log(listaNumerosSorteados);
+    //si el ya se sortearon todos los nuimeros
+    if (listaNumerosSorteados.length == numeroMaximo) {
+        asignarTextoElemento('p','Ya se sortearon todos los números posibles');
+    }else {
+            //si el numero generado esta incluido en la lista
+    if (listaNumerosSorteados.includes(numeroGenerado)) {
+        return generarNumeroSecreto();
+    }else {
+        listaNumerosSorteados.push(numeroGenerado);
+        return numeroGenerado;
+
+        }
+    
+    }
+
+}
+
+
+
+function condicionesIniciales() {
+    asignarTextoElemento('h1','Juego del número secreto!');
+    asignarTextoElemento('p',`Indica un número del 1 al ${numeroMaximo}`);
+    numeroSecreto = generarNumeroSecreto();
+    intentos = 1;
+    console.log(numeroSecreto);
+}
+
+function reiniciarJuego() {
+    //limpiar caja
+    limpiarCaja();
+    //Indicar mensaje de intervalo de números 
+    //Generar el número aleatorio
+    //Inicializar el número intentos
+    condicionesIniciales();
+    //Deshabilitar el botón de nuevo juego
+    document.querySelector('#reiniciar').setAttribute('disabled','true');
+    
+}
+
+condicionesIniciales();
